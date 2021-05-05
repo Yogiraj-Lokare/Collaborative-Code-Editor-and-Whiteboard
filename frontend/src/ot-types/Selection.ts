@@ -1,4 +1,4 @@
-import TextOperation from "./text-operation";
+import TextOperation from "./Text-Operation";
 // Range has `anchor` and `head` properties, which are zero-based indices into
 // the document. The `anchor` is the side of the selection that stays fixed,
 // `head` is the side of the selection where the cursor is. When both are
@@ -6,18 +6,18 @@ import TextOperation from "./text-operation";
 class Range {
   anchor: any;
   head: any;
-  constructor(anchor, head) {
+  constructor(anchor: any, head: any) {
     this.anchor = anchor;
     this.head = head;
   }
-  equals(other) {
+  equals(other: any) {
     return this.anchor === other.anchor && this.head === other.head;
   }
   isEmpty() {
     return this.anchor === this.head;
   }
-  transform(other) {
-    function transformIndex(index) {
+  transform(other: any) {
+    function transformIndex(index: any) {
       var newIndex = index;
       var ops = other.ops;
       for (var i = 0, l = other.ops.length; i < l; i++) {
@@ -42,7 +42,7 @@ class Range {
     }
     return new Range(newAnchor, transformIndex(this.head));
   }
-  static fromJSON(obj) {
+  static fromJSON(obj: any) {
     return new Range(obj.anchor, obj.head);
   }
 }
@@ -54,10 +54,10 @@ class Selection {
   static Range: any;
   ranges: any;
   position: any;
-  constructor(ranges) {
+  constructor(ranges: any) {
     this.ranges = ranges || [];
   }
-  equals(other) {
+  equals(other: any) {
     if (this.position !== other.position) {
       return false;
     }
@@ -81,11 +81,11 @@ class Selection {
     return false;
   }
   // Return the more current selection information.
-  compose(other) {
+  compose(other: any) {
     return other;
   }
   // Update the selection with respect to an operation.
-  transform(other) {
+  transform(other: any) {
     for (var i = 0, newRanges = []; i < this.ranges.length; i++) {
       newRanges[i] = this.ranges[i].transform(other);
     }
@@ -93,10 +93,10 @@ class Selection {
   }
   // Convenience method for creating selections only containing a single cursor
   // and no real selection range.
-  static createCursor(position) {
+  static createCursor(position: any) {
     return new Selection([new Range(position, position)]);
   }
-  static fromJSON(obj) {
+  static fromJSON(obj: any) {
     var objRanges = obj.ranges || obj;
     for (var i = 0, ranges = []; i < objRanges.length; i++) {
       ranges[i] = Range.fromJSON(objRanges[i]);

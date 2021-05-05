@@ -6,20 +6,11 @@ import "codemirror/lib/codemirror.css";
 import "codemirror/mode/javascript/javascript";
 import { UnControlled as CodeMirrorEditor } from "react-codemirror2";
 import { socket } from "../../socket/socket";
+import { Document, Update } from "../../types";
 import EditorClient from "../../ot/editor-client";
 import CodeMirrorAdapter from "../../ot/codemirror-adapter";
 import SocketIOAdapter from "../../ot/socketio-adapter";
 import WindowAddon from "../../utils/WindowAddon";
-
-interface Document {
-  str: string;
-  revision: number;
-  clients: any;
-}
-interface Update {
-  document: string;
-  language: number;
-}
 
 const CodeEditor: React.FC = () => {
   const [language, setLanguage] = useState<number | string>(0);

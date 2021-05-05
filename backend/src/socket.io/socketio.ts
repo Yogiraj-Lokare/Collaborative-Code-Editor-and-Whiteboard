@@ -28,7 +28,7 @@ module.exports = function code(io: Socket) {
     });
     socket.on("join-room", (_roomId, userId) => {
       //socket.join(roomId);
-      console.log("peertry");
+      console.log("peertry", _roomId, userId);
       socket.broadcast.emit("user-connected", userId);
 
       // socket.on("disconnect", () => {

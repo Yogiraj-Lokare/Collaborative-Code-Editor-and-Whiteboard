@@ -1,3 +1,5 @@
+import WrappedOperation from "./Wrapped-Operation";
+
 var NORMAL_STATE = "normal";
 var UNDOING_STATE = "undoing";
 var REDOING_STATE = "redoing";
@@ -9,7 +11,7 @@ class UndoManager {
   dontCompose: boolean;
   undoStack: any[];
   redoStack: any[];
-  constructor(maxItems?) {
+  constructor(maxItems?: number | undefined) {
     this.maxItems = maxItems || 50;
     this.state = NORMAL_STATE;
     this.dontCompose = false;
@@ -21,7 +23,7 @@ class UndoManager {
   // edit. When `compose` is true, compose the operation with the last operation
   // unless the last operation was alread pushed on the redo stack or was hidden
   // by a newer operation on the undo stack.
-  add(operation, compose?) {
+  add(operation: WrappedOperation, compose?: any) {
     if (this.state === UNDOING_STATE) {
       this.redoStack.push(operation);
       this.dontCompose = true;
@@ -43,14 +45,14 @@ class UndoManager {
     }
   }
   // Transform the undo and redo stacks against a operation by another client.
-  transform(operation) {
+  transform(operation: WrappedOperation) {
     this.undoStack = transformStack(this.undoStack, operation);
     this.redoStack = transformStack(this.redoStack, operation);
   }
   // Perform an undo by calling a function with the latest operation on the undo
   // stack. The function is expected to call the `add` method with the inverse
   // of the operation, which pushes the inverse on the redo stack.
-  performUndo(fn) {
+  performUndo(fn: any) {
     this.state = UNDOING_STATE;
     if (this.undoStack.length === 0) {
       throw new Error("undo not possible");
@@ -59,7 +61,7 @@ class UndoManager {
     this.state = NORMAL_STATE;
   }
   // The inverse of `performUndo`.
-  performRedo(fn) {
+  performRedo(fn: any) {
     this.state = REDOING_STATE;
     if (this.redoStack.length === 0) {
       throw new Error("redo not possible");
@@ -85,7 +87,7 @@ class UndoManager {
   }
 }
 
-function transformStack(stack, operation) {
+function transformStack(stack: any, operation: any) {
   var newStack = [];
   var Operation = operation.constructor;
   for (var i = stack.length - 1; i >= 0; i--) {

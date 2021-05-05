@@ -1,4 +1,5 @@
 import { Socket } from "socket.io-client";
+import Selection from "./Selection";
 class SocketIOAdapter {
   socket: Socket;
   constructor(socket: Socket) {
@@ -31,17 +32,17 @@ class SocketIOAdapter {
         self.trigger("reconnect");
       });
   }
-  sendOperation(revision, operation, selection) {
+  sendOperation(revision: number, operation: any, selection: Selection) {
     this.socket.emit("operation", revision, operation, selection);
   }
-  sendSelection(selection) {
+  sendSelection(selection: Selection) {
     this.socket.emit("selection", selection);
   }
-  registerCallbacks(cb) {
+  registerCallbacks(cb: any) {
     //@ts-ignore
     this.callbacks = cb;
   }
-  trigger(event) {
+  trigger(event: any) {
     var args = Array.prototype.slice.call(arguments, 1);
     //@ts-ignore
     var action = this.callbacks && this.callbacks[event];

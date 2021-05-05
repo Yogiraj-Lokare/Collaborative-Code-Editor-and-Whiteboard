@@ -1,13 +1,10 @@
-import UndoManager from "./undo-manager";
-import WrappedOperation from "./wrapped-operation";
-import Client from "./client";
-import TextOperation from "./text-operation";
-import Selection from "./selection";
-//var Client = ot.Client;
-//var Selection = ot.Selection;
-//var UndoManager = ot.UndoManager;
-//var TextOperation = ot.TextOperation;
-//var WrappedOperation = ot.WrappedOperation;
+import UndoManager from "./Undo-Manager";
+import WrappedOperation from "./Wrapped-Operation";
+import Client from "./Client";
+import TextOperation from "./Text-Operation";
+import Selection from "./Selection";
+import SocketIOAdapter from "./Socketio-Adapter";
+import CodeMirrorAdapter from "./Codemirror-Adapter";
 
 export class SelfMeta {
   selectionBefore: Selection;
@@ -19,10 +16,10 @@ export class SelfMeta {
   invert() {
     return new SelfMeta(this.selectionAfter, this.selectionBefore);
   }
-  compose(other) {
+  compose(other: any) {
     return new SelfMeta(this.selectionBefore, other.selectionAfter);
   }
-  transform(operation) {
+  transform(operation: any) {
     return new SelfMeta(
       this.selectionBefore.transform(operation),
       this.selectionAfter.transform(operation)
@@ -33,17 +30,17 @@ export class SelfMeta {
 class OtherMeta {
   clientId: any;
   selection: any;
-  constructor(clientId, selection) {
+  constructor(clientId: any, selection: any) {
     this.clientId = clientId;
     this.selection = selection;
   }
-  transform(operation) {
+  transform(operation: any) {
     return new OtherMeta(
       this.clientId,
       this.selection && this.selection.transform(operation)
     );
   }
-  static fromJSON(obj) {
+  static fromJSON(obj: any) {
     return new OtherMeta(
       obj.clientId,
       obj.selection && Selection.fromJSON(obj.selection)
@@ -52,21 +49,27 @@ class OtherMeta {
 }
 
 class OtherClient {
-  id: any;
-  listEl: any;
-  editorAdapter: any;
-  name: any;
+  id: string;
+  listEl: HTMLElement;
+  editorAdapter: CodeMirrorAdapter;
+  name!: string;
   li: HTMLLIElement;
-  hue: any;
-  color: string;
-  lightColor: string;
+  hue!: number;
+  color!: string;
+  lightColor: any;
   selection: any;
-  mark: any;
-  constructor(id, listEl, editorAdapter, name?, selection?) {
+  mark!: { clear: () => void } | null;
+  constructor(
+    id: string,
+    listEl: HTMLElement,
+    editorAdapter: CodeMirrorAdapter,
+    name?: string,
+    selection?: Selection | null | undefined
+  ) {
     this.id = id;
     this.listEl = listEl;
     this.editorAdapter = editorAdapter;
-    this.name = name;
+    if (name !== undefined) this.name = name;
 
     this.li = document.createElement("li");
     if (name) {
@@ -79,7 +82,7 @@ class OtherClient {
       this.updateSelection(selection);
     }
   }
-  setColor(hue) {
+  setColor(hue: number) {
     this.hue = hue;
     this.color = hsl2hex(hue, 0.75, 0.5);
     this.lightColor = hsl2hex(hue, 0.5, 0.9);
@@ -87,7 +90,7 @@ class OtherClient {
       this.li.style.color = this.color;
     }
   }
-  setName(name) {
+  setName(name: string) {
     if (this.name === name) {
       return;
     }
@@ -100,7 +103,7 @@ class OtherClient {
 
     this.setColor(hueFromName(name));
   }
-  updateSelection(selection) {
+  updateSelection(selection: any) {
     this.removeSelection();
     this.selection = selection;
     this.mark = this.editorAdapter.setOtherSelection(
@@ -126,14 +129,19 @@ class OtherClient {
 }
 
 class EditorClient extends Client {
-  serverAdapter: any;
-  editorAdapter: any;
+  serverAdapter: SocketIOAdapter;
+  editorAdapter: CodeMirrorAdapter;
   undoManager: UndoManager;
   clients: any;
-  clientListEl: any;
+  clientListEl!: HTMLElement;
   selection: any;
   state: any;
-  constructor(revision, clients, serverAdapter, editorAdapter) {
+  constructor(
+    revision: number,
+    clients: any,
+    serverAdapter: SocketIOAdapter,
+    editorAdapter: CodeMirrorAdapter
+  ) {
     //Client.call(this, revision);
     super(revision);
     //super(this,revision);
@@ -147,7 +155,7 @@ class EditorClient extends Client {
     var self = this;
 
     this.editorAdapter.registerCallbacks({
-      change: function (operation, inverse) {
+      change: function (operation: any, inverse: any) {
         self.onChange(operation, inverse);
       },
       selectionChange: function () {
@@ -165,19 +173,19 @@ class EditorClient extends Client {
     });
 
     this.serverAdapter.registerCallbacks({
-      client_left: function (clientId) {
+      client_left: function (clientId: any) {
         self.onClientLeft(clientId);
       },
-      set_name: function (clientId, name) {
+      set_name: function (clientId: any, name: any) {
         self.getClientObject(clientId).setName(name);
       },
       ack: function () {
         self.serverAck();
       },
-      operation: function (operation) {
+      operation: function (operation: any) {
         self.applyServer(TextOperation.fromJSON(operation));
       },
-      selection: function (clientId, selection) {
+      selection: function (clientId: any, selection: any) {
         if (selection) {
           self
             .getClientObject(clientId)
@@ -188,7 +196,7 @@ class EditorClient extends Client {
           self.getClientObject(clientId).removeSelection();
         }
       },
-      clients: function (clients) {
+      clients: function (clients: any) {
         var clientId;
         for (clientId in self.clients) {
           if (
@@ -224,7 +232,7 @@ class EditorClient extends Client {
     });
     //this.revision = undefined;
   }
-  addClient(clientId, clientObj) {
+  addClient(clientId: string, clientObj: any) {
     this.clients[clientId] = new OtherClient(
       clientId,
       this.clientListEl,
@@ -233,7 +241,7 @@ class EditorClient extends Client {
       clientObj.selection ? Selection.fromJSON(clientObj.selection) : null
     );
   }
-  initializeClients(clients) {
+  initializeClients(clients: any) {
     this.clients = {};
     for (var clientId in clients) {
       if (clients.hasOwnProperty(clientId)) {
@@ -241,7 +249,7 @@ class EditorClient extends Client {
       }
     }
   }
-  getClientObject(clientId) {
+  getClientObject(clientId: string) {
     var client = this.clients[clientId];
     if (client) {
       return client;
@@ -252,7 +260,7 @@ class EditorClient extends Client {
       this.editorAdapter
     ));
   }
-  onClientLeft(clientId) {
+  onClientLeft(clientId: string) {
     console.log("User disconnected: " + clientId);
     var client = this.clients[clientId];
     if (!client) {
@@ -264,7 +272,7 @@ class EditorClient extends Client {
   initializeClientList() {
     this.clientListEl = document.createElement("ul");
   }
-  applyUnredo(operation) {
+  applyUnredo(operation: any) {
     this.undoManager.add(operation.invert(this.editorAdapter.getValue()));
     this.editorAdapter.applyOperation(operation.wrapped);
     this.selection = operation.meta.selectionAfter;
@@ -276,7 +284,7 @@ class EditorClient extends Client {
     if (!this.undoManager.canUndo()) {
       return;
     }
-    this.undoManager.performUndo(function (o) {
+    this.undoManager.performUndo(function (o: any) {
       self.applyUnredo(o);
     });
   }
@@ -285,11 +293,11 @@ class EditorClient extends Client {
     if (!this.undoManager.canRedo()) {
       return;
     }
-    this.undoManager.performRedo(function (o) {
+    this.undoManager.performRedo(function (o: any) {
       self.applyUnredo(o);
     });
   }
-  onChange(textOperation, inverse) {
+  onChange(textOperation: TextOperation, inverse: TextOperation) {
     var selectionBefore = this.selection;
     this.updateSelection();
     var meta = new SelfMeta(selectionBefore, this.selection);
@@ -319,20 +327,20 @@ class EditorClient extends Client {
     this.selection = null;
     this.sendSelection(null);
   }
-  sendSelection(selection) {
+  sendSelection(selection: Selection | null) {
     if (this.state instanceof EditorClient.AwaitingWithBuffer) {
       return;
     }
-    this.serverAdapter.sendSelection(selection);
+    if (selection !== null) this.serverAdapter.sendSelection(selection);
   }
-  sendOperation(revision, operation) {
+  sendOperation(revision: any, operation: any) {
     this.serverAdapter.sendOperation(
       revision,
       operation.toJSON(),
       this.selection
     );
   }
-  applyOperation(operation) {
+  applyOperation(operation: TextOperation) {
     this.editorAdapter.applyOperation(operation);
     this.updateSelection();
     this.undoManager.transform(new WrappedOperation(operation, null));
@@ -341,21 +349,21 @@ class EditorClient extends Client {
 
 //inherit(EditorClient, Client);
 
-function rgb2hex(r, g, b) {
-  function digits(n) {
+function rgb2hex(r: number, g: number, b: number) {
+  function digits(n: number) {
     var m = Math.round(255 * n).toString(16);
     return m.length === 1 ? "0" + m : m;
   }
   return "#" + digits(r) + digits(g) + digits(b);
 }
 
-function hsl2hex(h, s, l) {
+function hsl2hex(h: number, s: number, l: number) {
   if (s === 0) {
     return rgb2hex(l, l, l);
   }
   var var2 = l < 0.5 ? l * (1 + s) : l + s - s * l;
   var var1 = 2 * l - var2;
-  var hue2rgb = function (hue) {
+  var hue2rgb = function (hue: number) {
     if (hue < 0) {
       hue += 1;
     }
@@ -376,7 +384,7 @@ function hsl2hex(h, s, l) {
   return rgb2hex(hue2rgb(h + 1 / 3), hue2rgb(h), hue2rgb(h - 1 / 3));
 }
 
-function hueFromName(name) {
+function hueFromName(name: string) {
   var a = 1;
   for (var i = 0; i < name.length; i++) {
     a = (17 * (a + name.charCodeAt(i))) % 360;
@@ -392,12 +400,12 @@ function hueFromName(name) {
 //   Const.prototype.constructor = Const;
 // }
 
-function last(arr) {
+function last(arr: string | any[]) {
   return arr[arr.length - 1];
 }
 
 // Remove an element from the DOM.
-function removeElement(el) {
+function removeElement(el: HTMLLIElement) {
   if (el.parentNode) {
     el.parentNode.removeChild(el);
   }

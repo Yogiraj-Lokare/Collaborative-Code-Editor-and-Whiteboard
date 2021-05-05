@@ -6,7 +6,7 @@ import { Operation, Props } from "../../types";
 class Board extends React.Component<Props> {
   timeout: any;
   socket: Socket;
-  ctx: any;
+  ctx!: CanvasRenderingContext2D | null;
   isDrawing = false;
   leftt: number;
   topp: number;
@@ -27,12 +27,13 @@ class Board extends React.Component<Props> {
   componentWillReceiveProps(newProps: Props) {
     this.leftt = newProps.lef;
     this.topp = newProps.top;
-    this.ctx.strokeStyle = newProps.color;
-    this.ctx.lineWidth = newProps.size;
+    this.ctx!.strokeStyle = newProps.color;
+    this.ctx!.lineWidth = newProps.size;
   }
 
   applyNewOperation(operation: Operation) {
     if (this.ctx === undefined) return;
+    if (this.ctx === null) return;
     let myColor = this.ctx.strokeStyle;
     let mySize = this.ctx.lineWidth;
     this.ctx.strokeStyle = operation.color;
@@ -48,16 +49,13 @@ class Board extends React.Component<Props> {
 
   drawOnCanvas() {
     var root = this;
-    var canvas = document.querySelector("#board");
     //@ts-ignore
-    this.ctx = canvas?.getContext("2d");
+    var canvas: HTMLCanvasElement = document.getElementById("board");
+    this.ctx = canvas!.getContext("2d");
     var ctx = this.ctx;
-    var sketch = document.querySelector("#sketch");
-    //@ts-ignore
-    var sketch_style = getComputedStyle(sketch);
-    //@ts-ignore
+    var sketch = document.getElementById("sketch");
+    var sketch_style = getComputedStyle(sketch!);
     canvas.width = parseInt(sketch_style.getPropertyValue("width"));
-    //@ts-ignore
     canvas.height = parseInt(sketch_style.getPropertyValue("height"));
 
     var mouse = { x: 0, y: 0 };
@@ -65,48 +63,43 @@ class Board extends React.Component<Props> {
 
     /* Mouse Capturing Work */
 
-    //@ts-ignore
     canvas.addEventListener(
       "mousemove",
       function (e) {
         last_mouse.x = mouse.x;
         last_mouse.y = mouse.y;
-        //@ts-ignore
         mouse.x = e.pageX - this.offsetLeft;
-        //@ts-ignore
         mouse.y = e.pageY - this.offsetTop;
-        //@ts-ignore
       },
       false
     );
 
     /* Drawing on Paint App */
-    //@ts-ignore
+    if (ctx == null) {
+      return;
+    }
     ctx.lineWidth = this.props.size;
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
-    //@ts-ignore
     ctx.strokeStyle = this.props.color;
-    //@ts-ignore
     canvas.addEventListener(
       "mousedown",
       function (e) {
-        //@ts-ignore
         canvas.addEventListener("mousemove", onPaint, false);
       },
       false
     );
-    //@ts-ignore
+
     canvas.addEventListener(
       "mouseup",
       function () {
-        //@ts-ignore
         canvas.removeEventListener("mousemove", onPaint, false);
       },
       false
     );
 
     var onPaint = function () {
+      if (ctx == null) return;
       ctx.beginPath();
       ctx.moveTo(last_mouse.x, last_mouse.y);
       ctx.lineTo(mouse.x, mouse.y);
@@ -114,8 +107,8 @@ class Board extends React.Component<Props> {
       ctx.stroke();
 
       root.socket.emit("draw_operation", {
-        color: root.ctx.strokeStyle,
-        size: root.ctx.lineWidth,
+        color: root.ctx!.strokeStyle,
+        size: root.ctx!.lineWidth,
         from: { x: last_mouse.x, y: last_mouse.y },
         to: { x: mouse.x, y: mouse.y },
       });

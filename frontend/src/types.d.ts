@@ -22,3 +22,12 @@ export type Props = {
   size: number;
   top: number;
 };
+export interface Document {
+  str: string;
+  revision: number;
+  clients: any;
+}
+export interface Update {
+  document: string;
+  language: number;
+}

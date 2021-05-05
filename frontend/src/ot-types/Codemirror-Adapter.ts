@@ -1,5 +1,5 @@
-import Selection from "./selection";
-import TextOperation from "./text-operation";
+import Selection from "./Selection";
+import TextOperation from "./Text-Operation";
 
 class CodeMirrorAdapter {
   cm: any;
@@ -7,7 +7,7 @@ class CodeMirrorAdapter {
   changeInProgress: boolean;
   selectionChanged: boolean;
   callbacks: any;
-  constructor(cm) {
+  constructor(cm: any) {
     this.cm = cm;
     this.ignoreNextChange = false;
     this.changeInProgress = false;
@@ -33,7 +33,7 @@ class CodeMirrorAdapter {
     this.cm.off("focus", this.onFocus);
     this.cm.off("blur", this.onBlur);
   }
-  registerCallbacks(cb) {
+  registerCallbacks(cb: any) {
     this.callbacks = cb;
   }
   onChange() {
@@ -45,7 +45,7 @@ class CodeMirrorAdapter {
     // a flag that makes this adapter defer all 'cursorActivity' events.
     this.changeInProgress = true;
   }
-  onChanges(_, changes) {
+  onChanges(_: any, changes: any) {
     if (!this.ignoreNextChange) {
       var pair = CodeMirrorAdapter.operationFromCodeMirrorChanges(
         changes,
@@ -96,7 +96,7 @@ class CodeMirrorAdapter {
 
     return new Selection(ranges);
   }
-  setSelection(selection) {
+  setSelection(selection: any) {
     var ranges = [];
     for (var i = 0; i < selection.ranges.length; i++) {
       var range = selection.ranges[i];
@@ -107,7 +107,7 @@ class CodeMirrorAdapter {
     }
     this.cm.setSelections(ranges);
   }
-  setOtherCursor(position, color, clientId) {
+  setOtherCursor(position: any, color: string, clientId: string) {
     var cursorPos = this.cm.posFromIndex(position);
     var cursorCoords = this.cm.cursorCoords(cursorPos);
     var cursorEl = document.createElement("span");
@@ -132,7 +132,7 @@ class CodeMirrorAdapter {
       insertLeft: true,
     });
   }
-  setOtherSelectionRange(range, color, clientId) {
+  setOtherSelectionRange(range: any, color: string, clientId: any) {
     var match = /^#([0-9a-fA-F]{6})$/.exec(color);
     if (!match) {
       throw new Error("only six-digit hex colors are allowed.");
@@ -150,8 +150,8 @@ class CodeMirrorAdapter {
       { className: selectionClassName }
     );
   }
-  setOtherSelection(selection, color, clientId) {
-    var selectionObjects = [];
+  setOtherSelection(selection: any, color: string, clientId: string) {
+    var selectionObjects: any[] = [];
     for (var i = 0; i < selection.ranges.length; i++) {
       var range = selection.ranges[i];
       if (range.isEmpty()) {
@@ -172,28 +172,28 @@ class CodeMirrorAdapter {
       },
     };
   }
-  trigger(event) {
+  trigger(event: any) {
     var args = Array.prototype.slice.call(arguments, 1);
     var action = this.callbacks && this.callbacks[event];
     if (action) {
       action.apply(this, args);
     }
   }
-  applyOperation(operation) {
+  applyOperation(operation: any) {
     this.ignoreNextChange = true;
     CodeMirrorAdapter.applyOperationToCodeMirror(operation, this.cm);
   }
-  registerUndo(undoFn) {
+  registerUndo(undoFn: any) {
     this.cm.undo = undoFn;
   }
-  registerRedo(redoFn) {
+  registerRedo(redoFn: any) {
     this.cm.redo = redoFn;
   }
   // Converts a CodeMirror change array (as obtained from the 'changes' event
   // in CodeMirror v4) or single change or linked list of changes (as returned
   // by the 'change' event in CodeMirror prior to version 4) into a
   // TextOperation and its inverse and returns them as a two-element array.
-  static operationFromCodeMirrorChanges(changes, doc) {
+  static operationFromCodeMirrorChanges(changes: any, doc: any) {
     // Approach: Replay the changes, beginning with the most recent one, and
     // construct the operation and its inverse. We have to convert the position
     // in the pre-change coordinate system to an index. We have a method to
@@ -208,15 +208,15 @@ class CodeMirrorAdapter {
     var operation = new TextOperation().retain(docEndLength);
     var inverse = new TextOperation().retain(docEndLength);
 
-    var indexFromPos = function (pos) {
+    var indexFromPos = function (pos: any) {
       return doc.indexFromPos(pos);
     };
 
-    function last(arr) {
+    function last(arr: any) {
       return arr[arr.length - 1];
     }
 
-    function sumLengths(strArr) {
+    function sumLengths(strArr: any) {
       if (strArr.length === 0) {
         return 0;
       }
@@ -227,8 +227,8 @@ class CodeMirrorAdapter {
       return sum + strArr.length - 1;
     }
 
-    function updateIndexFromPos(indexFromPos, change) {
-      return function (pos) {
+    function updateIndexFromPos(indexFromPos: any, change: any) {
+      return function (pos: any) {
         if (posLe(pos, change.from)) {
           return indexFromPos(pos);
         }
@@ -293,7 +293,7 @@ class CodeMirrorAdapter {
     return [operation, inverse];
   }
   // Apply an operation to a CodeMirror instance.
-  static applyOperationToCodeMirror(operation, cm) {
+  static applyOperationToCodeMirror(operation: any, cm: any) {
     cm.operation(function () {
       var ops = operation.ops;
       var index = 0; // holds the current index into CodeMirror's content
@@ -312,7 +312,7 @@ class CodeMirrorAdapter {
       }
     });
   }
-  static operationFromCodeMirrorChange(changes, doc) {
+  static operationFromCodeMirrorChange(changes: any, doc: any) {
     // Approach: Replay the changes, beginning with the most recent one, and
     // construct the operation and its inverse. We have to convert the position
     // in the pre-change coordinate system to an index. We have a method to
@@ -327,15 +327,15 @@ class CodeMirrorAdapter {
     var operation = new TextOperation().retain(docEndLength);
     var inverse = new TextOperation().retain(docEndLength);
 
-    var indexFromPos = function (pos) {
+    var indexFromPos = function (pos: any) {
       return doc.indexFromPos(pos);
     };
 
-    function last(arr) {
+    function last(arr: any) {
       return arr[arr.length - 1];
     }
 
-    function sumLengths(strArr) {
+    function sumLengths(strArr: any) {
       if (strArr.length === 0) {
         return 0;
       }
@@ -346,8 +346,8 @@ class CodeMirrorAdapter {
       return sum + strArr.length - 1;
     }
 
-    function updateIndexFromPos(indexFromPos, change) {
-      return function (pos) {
+    function updateIndexFromPos(indexFromPos: any, change: any) {
+      return function (pos: any) {
         if (posLe(pos, change.from)) {
           return indexFromPos(pos);
         }
@@ -413,7 +413,7 @@ class CodeMirrorAdapter {
   }
 }
 
-function cmpPos(a, b) {
+function cmpPos(a: any, b: any) {
   if (a.line < b.line) {
     return -1;
   }
@@ -428,21 +428,21 @@ function cmpPos(a, b) {
   }
   return 0;
 }
-function posEq(a, b) {
+function posEq(a: any, b: any) {
   return cmpPos(a, b) === 0;
 }
-function posLe(a, b) {
+function posLe(a: any, b: any) {
   return cmpPos(a, b) <= 0;
 }
 
-function minPos(a, b) {
+function minPos(a: any, b: any) {
   return posLe(a, b) ? a : b;
 }
-function maxPos(a, b) {
+function maxPos(a: any, b: any) {
   return posLe(a, b) ? b : a;
 }
 
-function codemirrorDocLength(doc) {
+function codemirrorDocLength(doc: any) {
   return (
     doc.indexFromPos({ line: doc.lastLine(), ch: 0 }) +
     doc.getLine(doc.lastLine()).length
@@ -454,19 +454,19 @@ function codemirrorDocLength(doc) {
 //    CodeMirrorAdapter.operationFromCodeMirrorChanges;
 
 var addStyleRule = (function () {
-  var added = {};
+  var added: any = {};
   var styleElement = document.createElement("style");
   document.documentElement
     .getElementsByTagName("head")[0]
     .appendChild(styleElement);
   var styleSheet = styleElement.sheet;
 
-  return function (css) {
+  return function (css: string) {
     if (added[css]) {
       return;
     }
     added[css] = true;
-    styleSheet.insertRule(
+    styleSheet?.insertRule(
       css,
       (styleSheet.cssRules || styleSheet.rules).length
     );
@@ -474,7 +474,7 @@ var addStyleRule = (function () {
 })();
 
 // Throws an error if the first argument is falsy. Useful for debugging.
-function assert(b, msg) {
+function assert(b: any, msg: any) {
   if (!b) {
     throw new Error(msg || "assertion error");
   }
@@ -483,7 +483,7 @@ function assert(b, msg) {
 // Bind a method to an object, so it doesn't matter whether you call
 // object.method() directly or pass object.method as a reference to another
 // function.
-function bind(obj, method) {
+function bind(obj: any, method: string) {
   var fn = obj[method];
   obj[method] = function () {
     fn.apply(obj, arguments);

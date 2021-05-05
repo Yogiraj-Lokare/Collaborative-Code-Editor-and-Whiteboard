@@ -4,21 +4,21 @@ class Client {
   static Synchronized: typeof Synchronized;
   static AwaitingWithBuffer: typeof AwaitingWithBuffer;
   revision: number;
-  state: Synchronized;
+  state: any;
   static AwaitingConfirm: typeof AwaitingConfirm;
   constructor(revision: number) {
     this.revision = revision; // the next expected revision number
     this.state = synchronized_; // start state
   }
-  setState(state) {
+  setState(state: any) {
     this.state = state;
   }
   // Call this method when the user changes the document.
-  applyClient(operation) {
+  applyClient(operation: any) {
     this.setState(this.state.applyClient(this, operation));
   }
   // Call this method with a new operation from the server
-  applyServer(operation) {
+  applyServer(operation: any) {
     this.revision++;
     this.setState(this.state.applyServer(this, operation));
   }
@@ -37,15 +37,15 @@ class Client {
   // our newest operation, an insertion of 5 characters at the beginning of the
   // document, the correct position of the other user's cursor in our current
   // document is 8.
-  transformSelection(selection) {
+  transformSelection(selection: any) {
     return this.state.transformSelection(selection);
   }
   // Override this method.
-  sendOperation(revision, operation) {
+  sendOperation(revision: any, operation: any) {
     throw new Error("sendOperation must be defined in child class");
   }
   // Override this method.
-  applyOperation(operation) {
+  applyOperation(operation: any) {
     throw new Error("applyOperation must be defined in child class");
   }
 }
@@ -55,23 +55,23 @@ class Client {
 class Synchronized {
   resend: any;
   constructor() {}
-  applyClient(client, operation) {
+  applyClient(client: any, operation: any) {
     // When the user makes an edit, send the operation to the server and
     // switch to the 'AwaitingConfirm' state
     client.sendOperation(client.revision, operation);
     return new AwaitingConfirm(operation);
   }
-  applyServer(client, operation) {
+  applyServer(client: any, operation: any) {
     // When we receive a new operation from the server, the operation can be
     // simply applied to the current document
     client.applyOperation(operation);
     return this;
   }
-  serverAck(client) {
+  serverAck(client: any) {
     throw new Error("There is no pending operation.");
   }
   // Nothing to do because the latest server state and client state are the same.
-  transformSelection(x) {
+  transformSelection(x: any) {
     return x;
   }
 }
@@ -84,16 +84,16 @@ var synchronized_ = new Synchronized();
 // to the server and is still waiting for an acknowledgement.
 class AwaitingConfirm {
   outstanding: any;
-  constructor(outstanding) {
+  constructor(outstanding: any) {
     // Save the pending operation
     this.outstanding = outstanding;
   }
-  applyClient(client, operation) {
+  applyClient(client: any, operation: any) {
     // When the user makes an edit, don't send the operation immediately,
     // instead switch to 'AwaitingWithBuffer' state
     return new AwaitingWithBuffer(this.outstanding, operation);
   }
-  applyServer(client, operation) {
+  applyServer(client: any, operation: any) {
     // This is another client's operation. Visualization:
     //
     //                   /\
@@ -108,15 +108,15 @@ class AwaitingConfirm {
     client.applyOperation(pair[1]);
     return new AwaitingConfirm(pair[0]);
   }
-  serverAck(client) {
+  serverAck(client: any) {
     // The client's operation has been acknowledged
     // => switch to synchronized state
     return synchronized_;
   }
-  transformSelection(selection) {
+  transformSelection(selection: any) {
     return selection.transform(this.outstanding);
   }
-  resend(client) {
+  resend(client: any) {
     // The confirm didn't come because the client was disconnected.
     // Now that it has reconnected, we resend the outstanding operation.
     client.sendOperation(client.revision, this.outstanding);
@@ -129,17 +129,17 @@ Client.AwaitingConfirm = AwaitingConfirm;
 class AwaitingWithBuffer {
   outstanding: any;
   buffer: any;
-  constructor(outstanding, buffer) {
+  constructor(outstanding: any, buffer: any) {
     // Save the pending operation and the user's edits since then
     this.outstanding = outstanding;
     this.buffer = buffer;
   }
-  applyClient(client, operation) {
+  applyClient(client: any, operation: any) {
     // Compose the user's changes onto the buffer
     var newBuffer = this.buffer.compose(operation);
     return new AwaitingWithBuffer(this.outstanding, newBuffer);
   }
-  applyServer(client, operation) {
+  applyServer(client: any, operation: any) {
     // Operation comes from another client
     //
     //                       /\
@@ -163,16 +163,16 @@ class AwaitingWithBuffer {
     client.applyOperation(pair2[1]);
     return new AwaitingWithBuffer(pair1[0], pair2[0]);
   }
-  serverAck(client) {
+  serverAck(client: any) {
     // The pending operation has been acknowledged
     // => send buffer
     client.sendOperation(client.revision, this.buffer);
     return new AwaitingConfirm(this.buffer);
   }
-  transformSelection(selection) {
+  transformSelection(selection: any) {
     return selection.transform(this.outstanding).transform(this.buffer);
   }
-  resend(client) {
+  resend(client: any) {
     // The confirm didn't come because the client was disconnected.
     // Now that it has reconnected, we resend the outstanding operation.
     client.sendOperation(client.revision, this.outstanding);

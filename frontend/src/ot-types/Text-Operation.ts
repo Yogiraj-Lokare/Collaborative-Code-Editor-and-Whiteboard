@@ -1,8 +1,8 @@
 // Constructor for new operations.
 class TextOperation {
-  baseLength: number;
-  targetLength: number;
-  ops: any[];
+  baseLength!: number;
+  targetLength!: number;
+  ops!: any[];
   constructor() {
     if (!this || this.constructor !== TextOperation) {
       // => function was called without 'new'
@@ -356,7 +356,7 @@ class TextOperation {
   // Decides whether two operations should be composed with each other
   // if they were inverted, that is
   // `shouldBeComposedWith(a, b) = shouldBeComposedWithInverted(b^{-1}, a^{-1})`.
-  shouldBeComposedWithInverted(other) {
+  shouldBeComposedWithInverted(other: TextOperation) {
     if (this.isNoop() || other.isNoop()) {
       return true;
     }
@@ -379,17 +379,17 @@ class TextOperation {
 
     return false;
   }
-  static isRetain(op) {
+  static isRetain(op: any) {
     return typeof op === "number" && op > 0;
   }
-  static isInsert(op) {
+  static isInsert(op: any) {
     return typeof op === "string";
   }
-  static isDelete(op) {
+  static isDelete(op: any) {
     return typeof op === "number" && op < 0;
   }
   // Converts a plain JS object into an operation and validates it.
-  static fromJSON(ops) {
+  static fromJSON(ops: any) {
     var o = new TextOperation();
     for (var i = 0, l = ops.length; i < l; i++) {
       var op = ops[i];
@@ -558,7 +558,7 @@ function getSimpleOp(operation: TextOperation) {
   return null;
 }
 
-function getStartIndex(operation) {
+function getStartIndex(operation: TextOperation) {
   if (TextOperation.isRetain(operation.ops[0])) {
     return operation.ops[0];
   }
