@@ -3,8 +3,7 @@ body {
 }
 
 .container {
-  width: 50vw;
-  height: 100%;
+  width: 100%;
 }
 
 .color-picker-container {
@@ -20,11 +19,10 @@ body {
 
 .board-container {
   width: 100%;
-  height: 90%;
+  height: 86vh;
   margin: auto;
   cursor: crosshair;
   background: white;
-  border-left: honeydew solid 1px;
 }
 .board {
   background-color: rgb(39, 40, 34);
@@ -43,8 +41,7 @@ body {
   grid-auto-rows: 300px;
 }
 
-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.cc {
+  color: rgb(255, 151, 172);
+  background-color: rgb(255, 80, 115);
 }

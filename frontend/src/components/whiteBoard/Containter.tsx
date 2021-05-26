@@ -13,9 +13,16 @@ import {
 const Container: React.FC = () => {
   const [color, setColor] = useState("#ffffff");
   const [size, setSize] = useState(3);
+  const [reset, setReset] = useState(false);
   const [left, setLeft] = useState<any>(750);
   const [top, setTop] = useState<any>(70);
   const board = useRef<HTMLElement | null>(null);
+
+  const Reset = () => {
+    setReset((reset: boolean) => {
+      return !reset;
+    });
+  };
 
   useEffect(() => {
     let lef = document.getElementById("contain");
@@ -39,7 +46,7 @@ const Container: React.FC = () => {
         >
           <Center>
             <input
-              style={{ height: "40px", borderRadius: "50%" }}
+              style={{ height: "40px", borderRadius: "50%", cursor: "pointer" }}
               type="color"
               value={color}
               onChange={(e) => setColor(e.target.value)}
@@ -59,7 +66,13 @@ const Container: React.FC = () => {
             </Slider>
           </Center>
           <Center>
-            <Button bg="cyan.300" variant="solid">
+            <Button
+              onClick={() => {
+                Reset();
+              }}
+              bg="cyan.300"
+              variant="solid"
+            >
               Reset
             </Button>
           </Center>
@@ -69,6 +82,7 @@ const Container: React.FC = () => {
             top={top}
             lef={left}
             color={color}
+            reset={reset}
             size={Math.floor(size / 10) + 3}
           />
         </div>

@@ -1,0 +1,23 @@
+.chat-input-container {
+  padding: 1vw;
+  border-top: 1px solid #ccc;
+  background-color: mediumaquamarine;
+}
+.message-container {
+  height: 75vh;
+  padding: 0 1vw;
+  overflow-y: auto;
+  background-color: rgb(193, 218, 255);
+}
+.message-box {
+  padding: 0.6vw;
+  margin: 1vw 0;
+  background-color: rgb(255, 153, 140);
+  border-radius: 5px;
+}
+.message-sender {
+  color: rgb(158, 243, 141);
+}
+.message {
+  color: mintcream;
+}

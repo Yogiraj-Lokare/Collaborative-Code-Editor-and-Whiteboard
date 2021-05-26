@@ -6,11 +6,15 @@ import WhiteBoard from "./components/whiteBoard/WhiteBoard";
 import AppHeaderBar from "./components/Appbar/Appbar";
 import Footer from "./components/Footer/Footer";
 import Video from "./components/Video/Video";
+import DashBoard from "./components/Dashboard";
+import Page from "./components/pages/mainPage/page";
 
 const App: React.FC = () => {
   return (
     <React.Fragment>
-      <AppHeaderBar />
+      <Page />
+      {/* <DashBoard /> */}
+      {/* <AppHeaderBar />
       <Flex alignItems="stretch" alignContent="stretch" direction="row">
         <Stack width="50vw">
           <CodeEditor />
@@ -18,8 +22,8 @@ const App: React.FC = () => {
         <Stack width="50vw">
           <WhiteBoard />
         </Stack>
-      </Flex>
-      <Video />
+      </Flex>*/}
+      {/* <Video /> */}
     </React.Fragment>
   );
 };

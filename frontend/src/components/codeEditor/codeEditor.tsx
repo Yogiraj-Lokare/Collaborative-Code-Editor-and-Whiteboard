@@ -60,7 +60,7 @@ const CodeEditor: React.FC = () => {
 
   return (
     <React.Fragment>
-      <div>
+      <div style={{ width: "100%" }}>
         <Flex direction="row" justifyContent="flex-end" padding="1">
           <FormControl w="10vw" marginRight="3">
             <Select
@@ -80,7 +80,7 @@ const CodeEditor: React.FC = () => {
         <div style={{ fontSize: "20px" }}>
           <CodeMirrorEditor
             editorDidMount={(editor: Editor) => {
-              editor.setSize("100%", "85vh");
+              editor.setSize("100%", "78vh");
               editor1 = editor;
             }}
             options={{

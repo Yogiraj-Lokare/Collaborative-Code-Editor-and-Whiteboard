@@ -6,6 +6,7 @@ const cors = require("cors");
 const socketio = require("./socket.io/socketio");
 app.use(cors());
 
+//node peerjs --port 3001
 const peerServer = PeerServer({ port: 3001, path: "/" });
 socketio(io);
 

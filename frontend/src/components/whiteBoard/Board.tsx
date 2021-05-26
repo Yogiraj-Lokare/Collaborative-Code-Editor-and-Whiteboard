@@ -10,12 +10,15 @@ class Board extends React.Component<Props> {
   isDrawing = false;
   leftt: number;
   topp: number;
+  reset: boolean;
   constructor(props: Props) {
     super(props);
     this.socket = socket;
     this.leftt = props.lef;
+    this.reset = false;
     this.topp = props.top;
     this.socket.on("new_operation", (operation: Operation) => {
+      console.log("op rec");
       this.applyNewOperation(operation);
     });
   }
@@ -25,6 +28,10 @@ class Board extends React.Component<Props> {
   }
 
   componentWillReceiveProps(newProps: Props) {
+    if (newProps.reset != this.reset) {
+      this.drawOnCanvas();
+      this.reset = newProps.reset;
+    }
     this.leftt = newProps.lef;
     this.topp = newProps.top;
     this.ctx!.strokeStyle = newProps.color;

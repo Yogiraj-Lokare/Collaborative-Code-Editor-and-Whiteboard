@@ -26,19 +26,38 @@ module.exports = function code(io: Socket) {
         rooms.set(data.room, codeClient!);
       }
     });
-    socket.on("join-room", (_roomId, userId) => {
-      //socket.join(roomId);
-      console.log("peertry", _roomId, userId);
-      socket.broadcast.emit("user-connected", userId);
-
-      // socket.on("disconnect", () => {
-      //   //socket.to(roomId).broadcast.emit("user-disconnected", userId);
+    socket.on("join-room", (userData) => {
+      const { roomID, userID } = userData;
+      socket.join(roomID);
+      //@ts-ignore
+      socket.in(roomID).emit("new-user-connect", userData);
+      socket.on("disconnect", () => {
+        //@ts-ignore
+        socket.in(roomID).emit("user-disconnected", userID);
+      });
+      // socket.on("broadcast-message", (message) => {
+      //   //@ts-ignore
+      //   socket
+      //     .to(roomID)
+      //     .broadcast.emit("new-broadcast-messsage", { ...message, userData });
       // });
+      // socket.on('reconnect-user', () => {
+      //     socket.to(roomID).broadcast.emit('new-user-connect', userData);
+      // });
+      socket.on("display-media", (value) => {
+        //@ts-ignore
+        socket.in(roomID).emit("display-media", { userID, value });
+      });
+      socket.on("user-video-off", (value) => {
+        //@ts-ignore
+        socket.in(roomID).emit("user-video-off", value);
+      });
     });
-    socket.on("canvas-data", (data) => {
-      socket.broadcast.emit("canvas-data", data);
+    socket.on("new-message", (data) => {
+      socket.broadcast.emit("add-message", data);
     });
     socket.on("draw_operation", (data) => {
+      //socket
       socket.broadcast.emit("new_operation", data);
     });
     socket.on("disconnect", function () {

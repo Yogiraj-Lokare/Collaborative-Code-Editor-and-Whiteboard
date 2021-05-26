@@ -19,6 +19,7 @@ export interface Operation {
 export type Props = {
   lef: number;
   color: string;
+  reset: boolean;
   size: number;
   top: number;
 };

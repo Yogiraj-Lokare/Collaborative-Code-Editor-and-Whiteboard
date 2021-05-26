@@ -6,11 +6,7 @@ import { AppBar, Toolbar } from "@material-ui/core";
 const Footer: React.FC = () => {
   return (
     <React.Fragment>
-      <AppBar
-        style={{ position: "fixed", bottom: "0" }}
-        variant="outlined"
-        position="static"
-      >
+      <AppBar variant="outlined" position="static">
         <Toolbar variant="dense">
           <PhoneIcon />
         </Toolbar>
