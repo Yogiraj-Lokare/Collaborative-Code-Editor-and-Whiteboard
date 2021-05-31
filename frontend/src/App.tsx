@@ -1,29 +1,24 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import "./App.css";
-import { Flex, FormControl, Select, Stack } from "@chakra-ui/react";
-import CodeEditor from "./components/codeEditor/codeEditor";
-import WhiteBoard from "./components/whiteBoard/WhiteBoard";
-import AppHeaderBar from "./components/Appbar/Appbar";
-import Footer from "./components/Footer/Footer";
-import Video from "./components/Video/Video";
-import DashBoard from "./components/Dashboard";
 import Page from "./components/pages/mainPage/page";
+import { BrowserRouter, Route } from "react-router-dom";
+import MainApp from "./components/HomePage/index";
+import { SetTokenHeader } from "./utils/Auth";
+import Video from "./components/pages/Video/Video";
 
 const App: React.FC = () => {
+  SetTokenHeader();
   return (
     <React.Fragment>
-      <Page />
-      {/* <DashBoard /> */}
-      {/* <AppHeaderBar />
-      <Flex alignItems="stretch" alignContent="stretch" direction="row">
-        <Stack width="50vw">
-          <CodeEditor />
-        </Stack>
-        <Stack width="50vw">
-          <WhiteBoard />
-        </Stack>
-      </Flex>*/}
-      {/* <Video /> */}
+      <Video />
+      {/* <BrowserRouter>
+        <Route path="/" exact={true} component={MainApp} />
+        <Route
+          path="/interview/:name/:email/:roomID"
+          exact={true}
+          component={Page}
+        />
+      </BrowserRouter> */}
     </React.Fragment>
   );
 };

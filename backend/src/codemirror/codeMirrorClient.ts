@@ -1,3 +1,4 @@
+//@ts-ignore
 import ot from "ot";
 import { Socket } from "socket.io";
 

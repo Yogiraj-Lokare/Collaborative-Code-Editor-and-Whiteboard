@@ -1,0 +1,32 @@
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  align-content: center;
+}
+.main-card {
+  box-shadow: rgb(18 0 0 / 9%) 2px 10px 19px -1px,
+    rgb(0 0 0 / 14%) 0px 1px 102px 12px, rgb(0 0 0 / 12%) 0px 5px 1px -9px;
+  padding: 2vw;
+  border-radius: 5px;
+}
+.card-header {
+  text-align: center;
+  font-size: 2vw;
+  margin-bottom: 2vw;
+}
+.button-container-auth {
+  margin-top: 1vh;
+  padding: 1vw;
+  display: flex;
+  justify-content: center;
+}
+.button-style {
+  padding: 1vw !important;
+  border-radius: 6px !important;
+  width: 100% !important;
+}
+.main-card input::placeholder {
+  color: rgb(123, 131, 134);
+}

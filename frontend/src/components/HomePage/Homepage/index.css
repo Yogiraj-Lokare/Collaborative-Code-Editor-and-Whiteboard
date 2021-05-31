@@ -1,0 +1,85 @@
+.box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.nav-bar {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin: 0 10vw;
+  padding: 0.3vw;
+  background-color: rgb(241, 241, 241);
+}
+
+.container {
+  width: 25vw;
+  padding: 1vw;
+}
+.main-text {
+  text-align: center;
+  font-size: x-large;
+  margin-top: 1vw;
+}
+.chip {
+  background-color: rgb(186, 255, 186);
+  border: 2px solid rgb(5, 238, 102);
+  border-radius: 20px;
+  font-size: small;
+  padding: 0.2vw 0.5vw;
+}
+.form-container {
+  padding: 1vw 1vw 0 1vw;
+}
+.user-form {
+  display: flex;
+  margin-bottom: 1vw;
+}
+.button-wrapper {
+  margin-top: 1vw;
+  display: flex;
+  justify-content: center;
+}
+.submit-button {
+  padding: 0.4vw 1vw;
+  border-radius: 5px;
+  background-color: #84c3ff;
+}
+.submit-button:active {
+  background-color: #2494fd;
+  transition: all 250ms;
+}
+.sec-container {
+  padding: 1vw;
+  width: 30%;
+  margin-top: 2vh;
+  align-items: center;
+  border: 1px solid gray;
+  border-radius: 5px;
+}
+.homepage-shedule {
+  align-self: stretch;
+}
+.homepage-time {
+  font-size: larger;
+  text-align: center;
+  text-decoration: underline;
+}
+.homepage-button-wrapper {
+  margin-top: 1vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.homepage-user-details {
+  margin-top: 0.7vw;
+  display: flex;
+  justify-content: space-between;
+}
+.homepage-share-button {
+}
+.homepage-email {
+  margin-left: 2vw;
+}

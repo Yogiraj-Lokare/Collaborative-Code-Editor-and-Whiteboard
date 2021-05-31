@@ -1,11 +1,10 @@
-import { Flex, Stack } from "@chakra-ui/layout";
-import React, { useEffect } from "react";
-import CodeEditor from "../../codeEditor/codeEditor";
+import React from "react";
+import CodeEditor from "../codeEditor/codeEditor";
 import { ReflexContainer, ReflexElement, ReflexSplitter } from "react-reflex";
-import Chat from "../../Chat/chat";
-import AppHeaderBar from "../../Appbar/Appbar";
-import { Button, IconButton } from "@chakra-ui/button";
-import Footer from "../../Footer/Footer";
+import Chat from "../Chat";
+import AppHeaderBar from "../Appbar/Appbar";
+import { Button } from "@chakra-ui/button";
+import Footer from "../Footer/Footer";
 const Page = () => {
   return (
     <React.Fragment>
