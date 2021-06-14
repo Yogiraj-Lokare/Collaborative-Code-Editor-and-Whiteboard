@@ -1,5 +1,6 @@
 import { Button } from "@chakra-ui/button";
 import { AddIcon, UnlockIcon } from "@chakra-ui/icons";
+import { Input } from "@chakra-ui/input";
 import { AppBar, Dialog, Toolbar } from "@material-ui/core";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -68,7 +69,7 @@ const NewInterviewSheduleForm: React.FC<any> = ({ handleClose }) => {
           email: e.target.email.value,
         },
       ],
-      roomID: (Math.random() * 10000).toString(),
+      roomID: `aer${(Math.random() * 10000).toString()}codemeetdorjf`,
       start_time: e.target.time.value,
     };
 
@@ -162,7 +163,8 @@ const InterviewDetails: React.FC<any> = ({
     };
     let trial = `/${code.name}/${code.email}/${code.roomID}`;
     let URL = `http://localhost:3000/interview${trial}`;
-    console.log(URL);
+    return URL;
+    //console.log(URL);
   };
 
   return (
@@ -178,21 +180,18 @@ const InterviewDetails: React.FC<any> = ({
           </div>
         </div>
         <div className="homepage-button-wrapper">
-          <div className="homepage-share-button">
-            <Button onClick={meetingLink} size="sm" backgroundColor="red.200">
-              Copy the meeting link
-            </Button>
+          <div className="homepage-share-link">
+            <Input bg="gray.100" readOnly value={meetingLink()} />
           </div>
           <div className="homepage-join">
-            <Button backgroundColor="twitter.300" width="24">
-              <a
-                href={`http://localhost:3000/interview/${localStorage.getItem(
-                  "username"
-                )}/${localStorage.getItem("email")}/${roomID}`}
-              >
-                Start
-              </a>
-            </Button>
+            <a
+              className="homepage-start-link"
+              href={`http://localhost:3000/interview/${localStorage.getItem(
+                "username"
+              )}/${localStorage.getItem("email")}/${roomID}`}
+            >
+              Start
+            </a>
           </div>
         </div>
       </div>

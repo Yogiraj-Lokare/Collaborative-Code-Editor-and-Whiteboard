@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState, useEffect, ChangeEvent, useContext } from "react";
 import { Editor } from "codemirror";
 import { Flex, FormControl, Select } from "@chakra-ui/react";
 import "codemirror/theme/monokai.css";
@@ -11,8 +11,10 @@ import EditorClient from "../../../ot/editor-client";
 import CodeMirrorAdapter from "../../../ot/codemirror-adapter";
 import SocketIOAdapter from "../../../ot/socketio-adapter";
 import WindowAddon from "../../../utils/WindowAddon";
+import { user } from "../mainPage/page";
 
 const CodeEditor: React.FC = () => {
+  const { roomID, name } = useContext(user);
   const [language, setLanguage] = useState<number | string>(0);
   var editor1: Editor;
 
@@ -21,7 +23,7 @@ const CodeEditor: React.FC = () => {
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setLanguage(e.target.value);
     socket.emit("changeLanguage", {
-      room: "room",
+      room: roomID,
       language: e.target.value,
     });
   };
@@ -49,12 +51,6 @@ const CodeEditor: React.FC = () => {
   socket.on("updateLanguage", (language: number) => {
     setLanguage(language);
   });
-
-  //###########################################################
-
-  useEffect(() => {
-    socket.emit("joinRoom", { room: "room", username: Date.now().toString() });
-  }, []);
 
   //*******************************************************************
 

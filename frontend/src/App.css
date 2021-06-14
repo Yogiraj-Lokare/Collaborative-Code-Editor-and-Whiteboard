@@ -2,6 +2,10 @@ body {
   margin: 0;
 }
 
+#react-jitsi-frame {
+  /* display: block !important; */
+}
+
 .whiteboard-container {
   width: 100%;
 }

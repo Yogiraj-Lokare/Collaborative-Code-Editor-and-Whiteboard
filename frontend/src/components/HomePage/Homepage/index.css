@@ -53,7 +53,7 @@
 }
 .sec-container {
   padding: 1vw;
-  width: 30%;
+  width: 40%;
   margin-top: 2vh;
   align-items: center;
   border: 1px solid gray;
@@ -78,8 +78,14 @@
   display: flex;
   justify-content: space-between;
 }
-.homepage-share-button {
-}
 .homepage-email {
   margin-left: 2vw;
+}
+.homepage-share-link {
+  width: 20vw;
+}
+.homepage-start-link {
+  background-color: #97cdff;
+  padding: 0.7vw;
+  border-radius: 5px;
 }

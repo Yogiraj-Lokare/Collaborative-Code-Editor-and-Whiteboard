@@ -1,16 +1,27 @@
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState } from "react";
 import { Button, Flex, IconButton } from "@chakra-ui/react";
 import { CloseIcon, EditIcon } from "@chakra-ui/icons";
 import { AppBar, Dialog, Toolbar } from "@material-ui/core";
 import WhiteBoard from "../whiteBoard/WhiteBoard";
+import { useHistory } from "react-router";
 
 const AppHeaderBar: React.FC = () => {
+  const history = useHistory();
+  const Redirect = () => {
+    history.push("/");
+  };
   return (
     <React.Fragment>
       <Flex>
         <AppBar variant="outlined" position="static">
-          <Toolbar variant="dense">
+          <Toolbar
+            style={{ display: "flex", justifyContent: "space-between" }}
+            variant="dense"
+          >
             <WhiteBoardController />
+            <Button onClick={Redirect} bg="red.400">
+              End Interview
+            </Button>
           </Toolbar>
         </AppBar>
       </Flex>

@@ -1,48 +1,74 @@
-import React from "react";
+import React, { createContext, useEffect } from "react";
 import CodeEditor from "../codeEditor/codeEditor";
 import { ReflexContainer, ReflexElement, ReflexSplitter } from "react-reflex";
 import Chat from "../Chat";
 import AppHeaderBar from "../Appbar/Appbar";
 import { Button } from "@chakra-ui/button";
 import Footer from "../Footer/Footer";
+import { useParams } from "react-router";
+import { socket } from "../../../utils/socket/socket";
+import { Jitsi__ } from "../Video/jitsi-meet";
+
+const userData = {
+  roomID: "room1",
+  name: "user",
+};
+
+export const user = createContext(userData);
+const { Provider } = user;
+
 const Page = () => {
+  const { roomID, name } = useSocketEventInit();
   return (
     <React.Fragment>
-      <AppHeaderBar />
-      <div style={{ display: "flex" }}>
-        <ReflexContainer
-          style={{ display: "flex", width: "75vw" }}
-          orientation="vertical"
-        >
-          <ReflexElement>
-            <CodeEditor />
-          </ReflexElement>
-          <ReflexSplitter
-            style={{
-              cursor: "e-resize",
-              width: "1vw",
-              height: "85vh",
-              backgroundColor: "lightgrey",
-            }}
-          />
-          <ReflexElement>
-            <Chat />
-          </ReflexElement>
-        </ReflexContainer>
-        <div style={{ width: "25vw" }}>
-          <VideoContainer>
-            <VideoComponent _id="1" />
-            <VideoComponent _id="2" />
-          </VideoContainer>
+      <Provider value={{ roomID, name }}>
+        <AppHeaderBar />
+        <div style={{ display: "flex" }}>
+          <ReflexContainer
+            style={{ display: "flex", width: "100vw" }}
+            orientation="vertical"
+          >
+            <ReflexElement>
+              <CodeEditor />
+            </ReflexElement>
+            <ReflexSplitter
+              style={{
+                cursor: "e-resize",
+                width: "1vw",
+                height: "85vh",
+                backgroundColor: "lightgrey",
+              }}
+            />
+            <ReflexElement>
+              <Jitsi__ />
+              {/* <Chat /> */}
+            </ReflexElement>
+          </ReflexContainer>
+          {/* <div style={{ width: "25vw" }}>
+            <VideoContainer>
+              <VideoComponent _id="1" />
+              <VideoComponent _id="2" />
+            </VideoContainer>
+          </div> */}
         </div>
-      </div>
-      <Footer />
+        <Footer />
+      </Provider>
     </React.Fragment>
   );
 };
 
 export default Page;
 
+const useSocketEventInit = () => {
+  //@ts-ignore
+  const { roomID, name } = useParams();
+  useEffect(() => {
+    socket.emit("joinRoom", { room: roomID, username: name });
+  }, []);
+  return { roomID, name };
+};
+
+/*
 const VideoContainer = ({ children }: any) => {
   return (
     <React.Fragment>
@@ -128,3 +154,4 @@ const VideoComponent: React.FC<Props> = (props: Props) => {
     </React.Fragment>
   );
 };
+*/

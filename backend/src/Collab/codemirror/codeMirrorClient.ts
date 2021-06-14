@@ -41,12 +41,12 @@ class CodeMirrorclient {
     this.server.setName(socket, username);
     socket.emit("updateLanguage", this.selectedLang);
   }
-  changeLang(language: language) {
+  changeLanguage(language: language) {
     this.codesnippet[this.selectedLang] = this.server.document;
     this.selectedLang = language;
     this.server.setDocument(this.codesnippet[this.selectedLang]);
   }
-  EmitDoc(socket: Socket) {
+  emitDoc(socket: Socket) {
     socket.in(this.roomID).emit("update__", {
       document: this.codesnippet[this.selectedLang],
       language: this.selectedLang,

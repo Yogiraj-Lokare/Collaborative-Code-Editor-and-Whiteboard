@@ -1,27 +1,42 @@
 import React from "react";
 import { socket } from "../../../utils/socket/socket";
 import { Socket } from "socket.io-client";
-import { SendCursorPosition } from "../../../utils/socket/socketEvents";
 import { Operation, Props } from "../../../types";
 class Board extends React.Component<Props> {
-  timeout: any;
   socket: Socket;
   ctx!: CanvasRenderingContext2D | null;
-  isDrawing = false;
   leftt: number;
   topp: number;
   reset: boolean;
+  room: string;
   constructor(props: Props) {
     super(props);
+    this.room = props.room;
     this.socket = socket;
     this.leftt = props.lef;
     this.reset = false;
     this.topp = props.top;
-    this.socket.on("new_operation", (operation: Operation) => {
-      console.log("op rec");
+    this.socket.on("new-op", (operation: Operation) => {
       this.applyNewOperation(operation);
     });
+    this.socket.on("clear-board", this.clearboard);
+    this.socket.emit("init-board", { room: this.room });
+    this.socket.on("get-all-ops", (operations: Operation[]) => {
+      operations.map((operation) => {
+        this.applyNewOperation(operation);
+      });
+    });
   }
+
+  clearboard = () => {
+    var sketch = document.getElementById("sketch");
+    var sketch_style = getComputedStyle(sketch!);
+    let image = new ImageData(
+      parseInt(sketch_style.getPropertyValue("width")),
+      parseInt(sketch_style.getPropertyValue("height"))
+    );
+    this.ctx?.putImageData(image, 0, 0);
+  };
 
   componentDidMount() {
     this.drawOnCanvas();
@@ -29,7 +44,8 @@ class Board extends React.Component<Props> {
 
   componentWillReceiveProps(newProps: Props) {
     if (newProps.reset != this.reset) {
-      this.drawOnCanvas();
+      socket.emit("reset-board", { room: this.room });
+      this.clearboard();
       this.reset = newProps.reset;
     }
     this.leftt = newProps.lef;
@@ -113,11 +129,14 @@ class Board extends React.Component<Props> {
       ctx.closePath();
       ctx.stroke();
 
-      root.socket.emit("draw_operation", {
-        color: root.ctx!.strokeStyle,
-        size: root.ctx!.lineWidth,
-        from: { x: last_mouse.x, y: last_mouse.y },
-        to: { x: mouse.x, y: mouse.y },
+      root.socket.emit("new_operation", {
+        room: root.room,
+        operation: {
+          color: root.ctx!.strokeStyle,
+          size: root.ctx!.lineWidth,
+          from: { x: last_mouse.x, y: last_mouse.y },
+          to: { x: mouse.x, y: mouse.y },
+        },
       });
     };
   }

@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { language } from "../codemirror/codeMirrorClient";
+import { language } from "../Collab/codemirror/codeMirrorClient";
 
 export type UserData = {
   room: string;
@@ -9,6 +9,9 @@ export type UserLang = {
   room: string;
   language: language;
 };
+/**
+ * extended Socket with room
+ */
 export class MySocket extends Socket {
   room!: string;
 }

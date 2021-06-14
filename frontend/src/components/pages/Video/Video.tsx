@@ -14,7 +14,41 @@ const Video: React.FC = () => {
     const myVideo = document.createElement("video");
     myVideo.muted = true;
     const peers: any = {};
-    navigator.mediaDevices
+
+    myPeer.on("open", (id) => {
+      navigator.mediaDevices
+        .getUserMedia({
+          video: true,
+          audio: true,
+        })
+        .then((stream) => {
+          console.log("__Webcam Ready");
+
+          addVideoStream(myVideo, stream);
+
+          myPeer.on("call", (call) => {
+            console.log("INCOMING CALL");
+            call.answer(stream);
+            const video = document.createElement("video");
+            call.on("stream", (userVideoStream) => {
+              addVideoStream(video, userVideoStream);
+            });
+          });
+
+          socket.on("user-connected", (userId) => {
+            const fc = () => {
+              console.log("lets see the deo");
+              connectToNewUser(userId, stream);
+            };
+            setTimeout(fc, 3000);
+          });
+
+          console.log("__Peer Open");
+          socket.emit("join-room", "ROOM_ID", id);
+        });
+    });
+
+    /*navigator.mediaDevices
       .getUserMedia({
         video: true,
         audio: true,
@@ -39,14 +73,14 @@ const Video: React.FC = () => {
           setTimeout(fc, 3000);
         });
       });
-
+*/
     socket.on("user-disconnected", (userId) => {
       if (peers[userId]) peers[userId].close();
     });
 
-    myPeer.on("open", (id) => {
-      socket.emit("join-room", "room", id);
-    });
+    // myPeer.on("open", (id) => {
+    //   socket.emit("join-room", "room", id);
+    // });
 
     function connectToNewUser(userId: any, stream: MediaStream) {
       const call = myPeer.call(userId, stream);

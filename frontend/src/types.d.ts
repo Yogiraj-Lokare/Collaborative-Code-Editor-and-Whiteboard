@@ -22,6 +22,7 @@ export type Props = {
   reset: boolean;
   size: number;
   top: number;
+  room: string;
 };
 export interface Document {
   str: string;

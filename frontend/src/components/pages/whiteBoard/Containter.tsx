@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import Board from "./Board";
 import {
   Flex,
@@ -9,8 +9,11 @@ import {
   SliderThumb,
   Button,
 } from "@chakra-ui/react";
+import { user } from "../mainPage/page";
 
 const Container: React.FC = () => {
+  const { roomID, name } = useContext(user);
+
   const [color, setColor] = useState("#ffffff");
   const [size, setSize] = useState(3);
   const [cursorsize, setCursorSize] = useState(3);
@@ -111,6 +114,7 @@ const Container: React.FC = () => {
         </Flex>
         <div className="board-container">
           <Board
+            room={roomID}
             top={top}
             lef={left}
             color={color}
